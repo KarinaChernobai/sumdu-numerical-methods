@@ -9,156 +9,130 @@ namespace NumMethods;
 
 public static class SeidelMethod
 {
-	private static double[] Solve(double [,] A, double[] C, double epsilon) 
+	private static double[]? Solve(double[,] A, double[] b, double epsilon)
 	{
-		// square mtrx ?
+		if(!isMatrixDiagDominant(A)) return null;
 		var n = A.GetLength(0);
 		var x0 = new double[n];
 		var x = new double[n];
-		var B = new double[n, n];
-		var D = new double[n];
+		var c = new double[n];
+		var epsilonSqr = epsilon * epsilon;
+		var sqrSumPrev = double.PositiveInfinity;
+		
+		for (var counter = 0; ; counter++)
+		{
+			UMatrixProdVector(A, x0, c);
+			for (var i = 0; i < n; i++) c[i] = b[i] - c[i];
 
-		// assign values to mrtx B and vector D
-		for (var i = 0; i < n; i++)
-		{
-			for (var j = 0; j < n; j++)
-			{
-				B[i, j] = i == j ? 0 : - A[i, j] / A[i, i];
-			}
-			D[i] = C[i] / A[i, i];
-		}
-		// find norm of the mtrx B
-		var normB = default(double);
-		for (var i = 0; i < n; i++)
-		{
-			var sum = default(double);
-			for (var j = 0; j < n; j++)
-			{
-				sum += Math.Abs(B[i, j]);
-			}
-			if (normB < sum) normB = sum;
-		}
-		// find delta
-		var delta = (1 - normB) / normB * epsilon;
+			ForwardSubstitution(A, c, x);
 
-		var counter = 0;
-		while (true) 
-		{
-			// find next x
-			var tmpX = new double[n];
-			x[0] = D[0];
-			for (var j = 1; j < n; j++)
-			{
-				x[0] += B[0, j] * x0[j];
-			}
-			for (var i = 1; i < n; i++)
-			{
-				x[i] = D[i];
-				for (var j = 0; j < i + 1; j++)
-				{
-					x[i] += B[i, j] * tmpX[i-1];
-				}
-				for (var j = i + 1; j < n; j++)
-				{
-					x[i] += B[i, j] * x0[i];
-				}
-				tmpX[i] = x[i];
-			}
-			// find norm of the diff x and x0
-			var normX = default(double);
-			for (var i = 0; i < n; i++)
-			{
-				var xDiff = Math.Abs(x[i] - x0[i]);
-				if (xDiff > normX) normX = xDiff;
-			}
-			if (normX < delta) break;
+			var sqrSum = SumOfSqrVectorDiff(x, x0);
+
+			Console.WriteLine($"\nIteration {counter}:");
+			WriteVector(x);
+			Console.WriteLine($"Sum of squares: {sqrSum:F10}");
+
+			if (sqrSum >= sqrSumPrev) return null;
+			if (sqrSum <= epsilonSqr) return x;
+			
+			sqrSumPrev = sqrSum;
 			(x0, x) = (x, x0);
-			if (counter > 1000) 
-			{
-				Console.WriteLine("Answer was not found");
-				return new double[n];
-			}
-			counter++;
 		}
-		return x;
 	}
 
-	private static double[] Solve2(double[,] A, double[] b, double epsilon) 
+	private static bool isMatrixDiagDominant(double[,] A) 
 	{
-		var n = A.GetLength(0);
-		var x0 = new double[n];
-		var x = new double[n];
-		var L = new double[n, n];
-		var U = new double[n, n];
-		var epsilonSqr = epsilon * epsilon;
-
-		// L and U mtrx set values
-		for (var i = 0; i < n; i++)
+		var len = A.GetLength(0);
+		for (var rowIndex = 0; rowIndex < len; rowIndex++) 
 		{
-			for(var j = 0; j <= i; j++)
+			var sum = default(double);
+			for (var columnIndex = 0; columnIndex < rowIndex; columnIndex++)
 			{
-				L[i, j] = A[i, j];
+				sum += Math.Abs(A[rowIndex, columnIndex]);
 			}
-			for (var j = i + 1; j < n; j++)
+			for (var columnIndex = rowIndex+1; columnIndex < len; columnIndex++)
 			{
-				U[i, j] = A[i, j];
+				sum += Math.Abs(A[rowIndex, columnIndex]);
 			}
+			if (sum > Math.Abs(A[rowIndex, rowIndex])) return false;
 		}
-		var counter = 0;
-		while (true) 
+		return true;
+	}
+
+	private static void ForwardSubstitution(double[,] lowerMatrix, double[] bVector, double[] rVector)
+	{
+		var rowCount = lowerMatrix.GetLength(0);
+		rVector[0] = bVector[0] / lowerMatrix[0, 0];
+		for (var rowIndex = 1; rowIndex < rowCount; rowIndex++)
 		{
-			// U * x
-			var Ux = new double[n];
-			for (var i = 0; i < n; i++)
-			{
-				var sum = default(double);
-				for (var j = 0; j < n; j++)
-				{
-					sum += U[i, j] * x0[j];
-				}
-				Ux[i] = sum;
-			}
-			// vecor diff b - Ux
-			var vecDiff = new double[n];
-			for (var i = 0; i < n; i++)
-			{
-				vecDiff[i] = b[i] - Ux[i];
-			}
-			// find next x-- forward substitution
-			for (var i = 0; i < n; i++)
-			{
-				var sum = default(double);
-				for (var j = 0; j < i - 1; j++)
-				{
-					sum += L[i, j] * x0[j];
-				}
-				x[i] = (b[i] - sum) / L[i, i];
-			}
-
-			var xSum = default(double);
-			for (var i = 0; i < n; i++)
-			{
-				xSum += Math.Pow(x[i] - x0[i], 2);
-			}
-			if (xSum <= Math.Pow(epsilon, 2)) return x;
-
-			(x0, x) = (x, x0);
-			if (counter > 1000)
-			{
-				Console.WriteLine("Answer was not found");
-				return new double[n];
-			}
-			counter++;
+			ForwardSubstitutionSum(lowerMatrix, rowIndex, rVector);
+			rVector[rowIndex] = (bVector[rowIndex] - rVector[rowIndex]) / lowerMatrix[rowIndex, rowIndex];
 		}
+	}
+
+	private static void ForwardSubstitutionSum(double[,] lowerMatrix, int rowIndex, double[] rVector)
+	{
+		rVector[rowIndex] = 0;
+		for (var i = 0; i < rowIndex; i++)
+		{
+			rVector[rowIndex] += rVector[i] * lowerMatrix[rowIndex, i];
+		}
+	}
+
+	private static double SumOfSqrVectorDiff(double[] v2, double[] v1)
+	{
+		var sum = 0d;
+		for (var i = 0; i < v1.Length; i++)
+		{
+			var d = v2[i] - v1[i];
+			sum += d * d;
+		}
+		return sum;
+	}
+
+	private static void UMatrixProdVector(double[,] uMatrix, double[] v, double[] r)
+	{
+		var rowLastIndex = r.Length - 1;
+		for (var rowIndex = 0; rowIndex < rowLastIndex; rowIndex++)
+		{
+			ref var sum = ref r[rowIndex];
+			sum = 0;
+			for (var columnIndex = rowIndex + 1; columnIndex <= rowLastIndex; columnIndex++) sum += uMatrix[rowIndex, columnIndex] * v[columnIndex];
+		}
+		r[rowLastIndex] = 0;
+	}
+
+	private static void WriteVector(double[] vector)
+	{
+		Console.Write(vector[0].ToString("F10"));
+		for (var i = 1; i < vector.Length; i++)
+		{
+			Console.Write(" | ");
+			Console.Write(vector[i].ToString("F10"));
+		}
+		Console.WriteLine();
 	}
 
 	public static void Run()
 	{
-		var A = new double[,] { { 2, 1}, { 1, 2 } };
-		var C = new double[] { 8, 1 };
+		var A = new double[,] { 
+			{ -0.68, -0.18, 0.02, 0.21 }, 
+			{ 0.16, -0.88, -0.14, 0.27 }, 
+			{ 0.37, 0.27, -1.02, -0.24 },
+			{ 0.12, 0.21, -0.18, -0.75 }
+		};
+		var C = new double[] { -1.83, 0.65, -2.23, 1.13 };
 
 		var epsilon = 0.0001;
-		var x = Solve2(A, C, epsilon);
-		for (var i = 0; i < x.Length; i++) Console.WriteLine(x[i]);
+		var x = Solve(A, C, epsilon);
+		if (x == null)
+		{
+			Console.WriteLine("\nThe condition of the converge is not met.");
+		}
+		else
+		{
+			Console.WriteLine("\nResult:");
+			WriteVector(x);
+		}
 	}
 }

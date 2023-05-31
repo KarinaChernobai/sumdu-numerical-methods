@@ -6,6 +6,6 @@ internal class Program
 {
 	static void Main(string[] args)
 	{
-		SeidelMethod2.Run();
+		SeidelMethod.Run();
 	}
 }

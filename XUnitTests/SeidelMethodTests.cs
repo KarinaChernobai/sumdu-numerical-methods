@@ -8,7 +8,7 @@ public class SeidelMethodTests
 {
 	private static readonly Action<double[,], double[], double[]> UMatrixProdVector = GetAction<double[,], double[], double[]>("UMatrixProdVector");
 	private static Action<T1, T2, T3> GetAction<T1, T2, T3>(string name)
-		=> (Action<T1, T2, T3>)Delegate.CreateDelegate(typeof(Action<T1, T2, T3>), typeof(SeidelMethod2).GetMethod(name, BindingFlags.Static | BindingFlags.NonPublic)!);
+		=> (Action<T1, T2, T3>)Delegate.CreateDelegate(typeof(Action<T1, T2, T3>), typeof(SeidelMethod).GetMethod(name, BindingFlags.Static | BindingFlags.NonPublic)!);
 
 	private static readonly Action<double[,], int, double[]> VectorDotProduct = GetAction<double[,], int, double[]>("VectorDotProduct");
 
