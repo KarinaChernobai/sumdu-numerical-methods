@@ -6,6 +6,7 @@ internal class Program
 {
 	static void Main(string[] args)
 	{
-		SeidelMethod.Run();
+		GradientDescent5.Solve();
+		// GradientDescent3.Run();
 	}
 }
