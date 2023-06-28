@@ -2,7 +2,7 @@
 
 namespace NumMethods;
 
-public class GradientDescent5Tests
+public class GradientDescentTests
 {
 	[Fact]
 	public void TransposeTest()
@@ -18,9 +18,9 @@ public class GradientDescent5Tests
 			{ 2, 5 },
 			{ 3, 6 },
 		};
-		var actual = GradientDescent5.Transpose(a1);
+		var actual = GradientDescent.Transpose(a1);
 		AssertMatrixEqual(actual, a2);
-		actual = GradientDescent5.Transpose(a2);
+		actual = GradientDescent.Transpose(a2);
 		AssertMatrixEqual(actual, a1);
 	}
 
@@ -39,9 +39,9 @@ public class GradientDescent5Tests
 			{ 2, 5, 8 },
 			{ 3, 6, 9 },
 		};
-		var actual = GradientDescent5.Transpose(a1);
+		var actual = GradientDescent.Transpose(a1);
 		AssertMatrixEqual(actual, a2);
-		actual = GradientDescent5.Transpose(a2);
+		actual = GradientDescent.Transpose(a2);
 		AssertMatrixEqual(actual, a1);
 	}
 
