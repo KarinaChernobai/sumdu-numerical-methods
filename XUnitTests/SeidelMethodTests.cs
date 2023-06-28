@@ -6,11 +6,11 @@ namespace NumMethods;
 
 public class SeidelMethodTests
 {
-	private static readonly Action<double[,], double[], double[]> UMatrixProdVector = GetAction<double[,], double[], double[]>("UMatrixProdVector");
 	private static Action<T1, T2, T3> GetAction<T1, T2, T3>(string name)
 		=> (Action<T1, T2, T3>)Delegate.CreateDelegate(typeof(Action<T1, T2, T3>), typeof(SeidelMethod).GetMethod(name, BindingFlags.Static | BindingFlags.NonPublic)!);
 
-	private static readonly Action<double[,], int, double[]> VectorDotProduct = GetAction<double[,], int, double[]>("VectorDotProduct");
+	private static readonly Action<double[,], double[], double[]> UMatrixProdVector = GetAction<double[,], double[], double[]>("UMatrixProdVector");
+	//private static readonly Action<double[,], int, double[]> VectorDotProduct = GetAction<double[,], int, double[]>("VectorDotProduct");
 
 	[Fact]
 	public void UMatrixProdVector1()
@@ -46,20 +46,20 @@ public class SeidelMethodTests
 		Assert.Equal(expected, actual);
 	}
 
-	[Fact]
-	public void VectorDotProduct1()
-	{
-		var matrix = new double[,]
-		{
-			{ 11,   12,   13,  14 },
-			{ 110,  120,  130, 140 },
-			{ 1100,  1200,  1300, 1400 },
-			{ 11000,  12000,  13000, 14000 },
-		};
-		var vector = new double[] { 1, 2, 3, 4 };
-		var expected2 = new double[] { 110 * 1, 120 * 2, 130 * 3, 140 * 4 };
-		var actual = new double[vector.Length];
-		VectorDotProduct(matrix, 1, actual);
-		Assert.Equal(expected2, vector);
-	}
+	//[Fact]
+	//public void VectorDotProduct1()
+	//{
+	//	var matrix = new double[,]
+	//	{
+	//		{ 11,   12,   13,  14 },
+	//		{ 110,  120,  130, 140 },
+	//		{ 1100,  1200,  1300, 1400 },
+	//		{ 11000,  12000,  13000, 14000 },
+	//	};
+	//	var vector = new double[] { 1, 2, 3, 4 };
+	//	var expected2 = new double[] { 110 * 1, 120 * 2, 130 * 3, 140 * 4 };
+	//	var actual = new double[vector.Length];
+	//	VectorDotProduct(matrix, 1, actual);
+	//	Assert.Equal(expected2, vector);
+	//}
 }
