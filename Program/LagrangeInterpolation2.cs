@@ -7,11 +7,11 @@ using System.Threading.Tasks;
 
 namespace NumMethods;
 
-public class LagrangeInterpolation
+public class LagrangeInterpolation2
 {
 	double[,] _samples;
 	int N;
-	public LagrangeInterpolation(double[,] samples) 
+	public LagrangeInterpolation2(double[,] samples) 
 	{
 		_samples = samples;
 		N = samples.GetLength(1);
