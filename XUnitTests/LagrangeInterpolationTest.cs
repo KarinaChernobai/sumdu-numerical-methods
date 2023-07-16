@@ -15,8 +15,8 @@ public class LagrangeInterpolationTest
 	[Fact]
 	public void LBFTest()
 	{
-		double[,] samples = { { 0, 1 }, { 0, 10 } };
-		var lagrange = new LagrangeInterpolation2(samples);
+		var samples = new Point2D[] { new(0, 0), new(1, 10) };
+		var lagrange = new LagrangeInterpolation(samples);
 		var x = 0.5;
 		var numerator = lagrange.FullLBFNumerator(x);
 		Assert.Equal(-0.25, numerator, Tolerance);
@@ -29,8 +29,8 @@ public class LagrangeInterpolationTest
 	[Fact]
 	public void InterpolateTest()
 	{
-		double[,] samples = { { 0, 1 }, { 0, 10 } };
-		var lagrange = new LagrangeInterpolation2(samples);
+		var samples = new Point2D[] { new(0, 0), new(1, 10) };
+		var lagrange = new LagrangeInterpolation(samples);
 		var x = 0.5d;
 		var res = lagrange.Interpolate(x);
 		Assert.Equal(5d, res, Tolerance);
@@ -39,8 +39,12 @@ public class LagrangeInterpolationTest
 	[Fact]
 	public void InterpolateTest2()
 	{
-		double[,] samples = { { 3, 9 }, { 21, -3 } };
-		var lagrange = new LagrangeInterpolation2(samples);
+		var samples = new Point2D[] 
+		{
+			new(3, 21),
+			new(9, -3),
+		};
+		var lagrange = new LagrangeInterpolation(samples);
 		var x = 6d;
 		var res = lagrange.Interpolate(x);
 		Assert.Equal(9d, res, Tolerance);
@@ -49,8 +53,14 @@ public class LagrangeInterpolationTest
 	[Fact]
 	public void InterpolateTest3()
 	{
-		double[,] samples = { { 0, 1, 2, 3 }, { 0, 0.5, 2, 1.5 } };
-		var lagrange = new LagrangeInterpolation2(samples);
+		var samples = new Point2D[] 
+		{
+			new(0, 0),
+			new(1, 0.5),
+			new(2, 2),
+			new(3, 1.5),
+		};
+		var lagrange = new LagrangeInterpolation(samples);
 		var x = 1.6d;
 		var res = lagrange.Interpolate(x);
 		Assert.Equal(1.472, res, Tolerance);
@@ -59,12 +69,14 @@ public class LagrangeInterpolationTest
 	[Fact]
 	public void LBFTest4()
 	{
-		double[,] samples =
+		var samples = new Point2D[]
 		{
-			{ 0.4, 0.5, 0.7, 0.8 },
-			{ -0.916291, -0.693147, -0.356675, -0.223144 }
+			new(0.4, -0.916291),
+			new(0.5, -0.693147),
+			new(0.7, -0.356675),
+			new(0.8, -0.223144),
 		};
-		var lagrange = new LagrangeInterpolation2(samples);
+		var lagrange = new LagrangeInterpolation(samples);
 		var x = 0.6d;
 		var numerator = lagrange.FullLBFNumerator(x);
 		Assert.Equal(0.0004, numerator, Tolerance);
@@ -73,12 +85,14 @@ public class LagrangeInterpolationTest
 	[Fact]
 	public void InterpolateTest4()
 	{
-		double[,] samples = 
-		{ 
-			{ 0.4, 0.5, 0.7, 0.8 }, 
-			{ -0.916291, -0.693147, -0.356675, -0.223144 } 
+		var samples = new Point2D[]
+		{
+			new(0.4, -0.916291),
+			new(0.5, -0.693147),
+			new(0.7, -0.356675),
+			new(0.8, -0.223144),
 		};
-		var lagrange = new LagrangeInterpolation2(samples);
+		var lagrange = new LagrangeInterpolation(samples);
 		var x = 0.6d;
 		var res = lagrange.Interpolate(x);
 		Assert.Equal(-0.509976, res, Tolerance);
