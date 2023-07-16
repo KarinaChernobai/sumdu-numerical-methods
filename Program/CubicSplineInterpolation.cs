@@ -47,21 +47,29 @@ public class CubicSplineInterpolation
 		}
 	}
 
-	private static void CheckMainDiagonal(TridiagonalData[] data)
+	private static void CheckMainDiagonal(TridiagonalData[] data) 
 	{
-		var mainAbs = Math.Abs(data[0].Main);
-		if (mainAbs <= Math.Abs(data[0].Upper)) throw new MatrixException("Main diagonal doesn't dominate row 0.");
-		if (mainAbs <= Math.Abs(data[1].Lower)) throw new MatrixException("Main diagonal doesn't dominate column 0.");
+		var mainDiagonal = 0d;
+		for (int i = 0; i < data.Length; i++)
+		{
+			mainDiagonal += data[i].Main;
+		}
+		var sum = data[0].Main + data[0].Upper;
+		if (sum >= mainDiagonal) throw new MatrixException("Main diagonal doesn't dominate row 0.");
+		sum = data[1].Lower + data[0].Main;
+		if (sum >= mainDiagonal) throw new MatrixException("Main diagonal doesn't dominate column 0.");
 		var lastIndex = data.Length - 1;
 		for (int i = 1; i < lastIndex; i++)
 		{
-			mainAbs = Math.Abs(data[i].Main);
-			if (mainAbs <= Math.Abs(data[i].Lower) + Math.Abs(data[i].Upper)) throw new MatrixException($"Main diagonal doesn't dominate row {i}.");
-			if (mainAbs <= Math.Abs(data[i + i].Lower) + Math.Abs(data[i - 1].Upper)) throw new MatrixException($"Main diagonal doesn't dominate column {i}.");
+			sum = data[i].Lower + data[i].Main + data[i].Upper;
+			if (sum >= mainDiagonal) throw new MatrixException($"Main diagonal doesn't dominate row {i}.");
+			sum = data[i + 1].Lower + data[i].Main + data[i - 1].Upper;
+			if (sum >= mainDiagonal) throw new MatrixException($"Main diagonal doesn't dominate column {i}.");
 		}
-		mainAbs = Math.Abs(data[lastIndex].Main);
-		if (mainAbs <= Math.Abs(data[lastIndex].Lower)) throw new MatrixException($"Main diagonal doesn't dominate row {lastIndex}.");
-		if (mainAbs <= Math.Abs(data[lastIndex - 1].Upper)) throw new MatrixException($"Main diagonal doesn't dominate column {lastIndex}.");
+		sum = data[lastIndex].Lower + data[lastIndex].Main;
+		if (sum >= mainDiagonal) throw new MatrixException($"Main diagonal doesn't dominate row {lastIndex}.");
+		sum = data[lastIndex].Main + data[lastIndex - 1].Upper;
+		if (sum >= mainDiagonal) throw new MatrixException($"Main diagonal doesn't dominate column {lastIndex}.");
 	}
 
 
