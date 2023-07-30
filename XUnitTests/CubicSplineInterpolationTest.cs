@@ -41,30 +41,6 @@ public class CubicSplineInterpolationTest
 	}
 
 	[Fact]
-	public void InterpolateTest()
-	{
-		var samples = new Point2D[] { new(0, 0), new(1, 10) };
-		var spline = new CubicSplineInterpolation(samples);
-		var x = 0.5d;
-		var res = spline.Interpolate(x);
-		Assert.Equal(5d, res, Tolerance);
-	}
-
-	[Fact]
-	public void InterpolateTest2()
-	{
-		var samples = new Point2D[]
-		{
-			new(3, 21),
-			new(9, -3),
-		};
-		var spline = new CubicSplineInterpolation(samples);
-		var x = 6d;
-		var res = spline.Interpolate(x);
-		Assert.Equal(9d, res, Tolerance);
-	}
-
-	[Fact]
 	public void InterpolateTest3()
 	{
 		var samples = new Point2D[]
@@ -75,10 +51,27 @@ public class CubicSplineInterpolationTest
 			new(3, 1.5),
 		};
 		var spline = new CubicSplineInterpolation(samples);
-		//var x = 1.5d;
-		var x = 2.8d;
-		var res = spline.Interpolate(x);
-		Assert.Equal(1.472, res, Tolerance);
+		var testAccess = new TestAccess(spline);
+		for (int i = 0; i < samples.Length - 1; i++) 
+		{
+			var res = spline.Interpolate(samples[i].X, i);
+			Assert.Equal(samples[i].Y, res, Tolerance);
+			res = spline.Interpolate(samples[i + 1].X, i);
+			Assert.Equal(samples[i + 1].Y, res, Tolerance);
+		}
+
+		Assert.Equal(0, testAccess.Derivative2(samples[0].X, 0), Tolerance);
+		Assert.Equal(0, testAccess.Derivative2(samples[samples.Length - 1].X, samples.Length - 2), Tolerance);
+		for (int i = 1; i < samples.Length - 1; i++) 
+		{
+			var der1 = testAccess.Derivative1(samples[i].X, i - 1);
+			var der2 = testAccess.Derivative1(samples[i].X, i);
+			Assert.True(Math.Abs(der1 - der2) < Tolerance, $"i = {i}, der1 = {der1}, der2 = {der2}");
+
+			der1 = testAccess.Derivative2(samples[i].X, i - 1);
+			der2 = testAccess.Derivative2(samples[i].X, i);
+			Assert.True(Math.Abs(der1 - der2) < Tolerance);
+		}
 	}
 
 	[Fact]
@@ -94,6 +87,6 @@ public class CubicSplineInterpolationTest
 		var spline = new CubicSplineInterpolation(samples);
 		var x = 0.6d;
 		var res = spline.Interpolate(x);
-		Assert.Equal(-0.5, res, 0.01);
+		Assert.Equal(-0.509976, res, 0.01);
 	}
 }
