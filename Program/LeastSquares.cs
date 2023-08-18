@@ -42,7 +42,6 @@ public class LeastSquares
 		_samples = samples;
 	}
 
-	// write the functions in comments
 	public int FindRegrFunction()
 	{
 		var n = _samples.Length;
