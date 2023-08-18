@@ -71,7 +71,6 @@ public class CubicSplineInterpolation
 
 	private void TridiagonalMatrix(TridiagonalData[] data) 
 	{
-		//CheckMainDiagonal(data);
 		for (var i = 1; i < data.Length; i++) 
 		{ 
 			var w = data[i].Lower/data[i-1].Main;

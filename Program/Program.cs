@@ -9,7 +9,41 @@ internal static class Program
 
 	static void Main(string[] args)
 	{
-		Interpolate();
+		Console.WriteLine("");
+		var samples = new LeastSquares.Point2D[]
+		{
+			new(1, 33.5),
+			new(10, 37),
+			new(20, 41.2),
+			new(30, 46.1),
+			new(40, 50),
+			new(50, 52.9),
+			new(60, 56.8),
+			new(70, 64.3),
+			new(80, 69.9),
+		};
+		var leastSquares = new LeastSquares(samples);
+		var num = leastSquares.FindRegrFunction();
+		leastSquares.Linearize(num);
+		leastSquares.LinearRegrCoeffs(num);
+
+		var samples2 = new LeastSquares.Point2D[]
+		{
+			new(2, 14),
+			new(5, 21),
+			new(7, 25),
+			new(8, 26),
+			new(10, 30),
+			new(12, 34),
+			new(15, 41),
+			new(20, 54),
+			new(25, 67),
+			new(40, 110),
+		};
+		var leastSquares2 = new LeastSquares(samples2);
+		num = leastSquares2.FindRegrFunction();
+		leastSquares2.Linearize(num);
+		leastSquares2.LinearRegrCoeffs(num);
 	}
 
 	static void Interpolate() 
