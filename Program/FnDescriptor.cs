@@ -1,9 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using static NumMethods.LeastSquares;
 namespace NumMethods2;
 
 public interface IFnDescriptor
@@ -144,7 +139,7 @@ public abstract class FnDescriptor
 
 	public abstract string Name { get; }
 
-	// коефіцієнта детермінації
+	// коефіцієнт детермінації
 	public double DetermCoeff { get; private set; }
 	// критерій Фішера
 	public double FishersCriteria { get; private set; }
