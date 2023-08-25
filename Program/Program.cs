@@ -10,7 +10,15 @@ internal static class Program
 
 	static void Main(string[] args)
 	{
-		LeastSquares();
+		IntegrateSimpson();
+	}
+
+	static void IntegrateSimpson()
+	{
+		var a = 1;
+		var b = 3;
+		var res = Integral.IntegrateSimpson(a, b, 0.001, x => Math.Sqrt(1 + x * x * x));
+		Console.WriteLine($"The definite integral from {a} to {b} is {res.ToString(DoubleFormat)}");
 	}
 
 	static void LeastSquares()
