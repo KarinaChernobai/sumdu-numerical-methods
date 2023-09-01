@@ -11,7 +11,7 @@ public static class Integral
 {
 	public static double IntegrateSimpson(double a, double b, double epsilon, Func<double, double> f)
 	{
-		var n = 4;
+		var n = 2;
 		var step = (b - a) / n;
 		var diff = epsilon + 1;
 		var I1 = default(double);
@@ -32,7 +32,8 @@ public static class Integral
 	private static double SumOdd(double n, double step, double a, Func<double, double> f) 
 	{
 		var res = default(double);
-		for (var k = 1; k < a * n / 2; k++) 
+		var cond = (a * n) / 2;
+		for (var k = 1; k <= cond; k++) 
 		{
 			res += f(a + (2 * k - 1) * a * step);
 		}
@@ -42,7 +43,8 @@ public static class Integral
 	private static double SumEven(double n, double step, double a, Func<double, double> f)
 	{
 		var res = default(double);
-		for (var k = 2; k < a * n / 2; k++)
+		var cond = (a * n) / 2;
+		for (var k = 2; k <= cond; k++)
 		{
 			res += f(a + (2 * k - 2) * a * step);
 		}
